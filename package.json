@@ -1,0 +1,33 @@
+{
+  "name": "kong-gateway-admin-form-generator",
+  "version": "1.0.0",
+  "description": "Generate form based on schema returned by Kong Gateway admin API",
+  "scripts": {
+    "build": "parcel build src/*.pug --no-source-maps --no-cache --dist-dir build",
+    "dev": "parcel --no-cache src/*.pug --dist-dir dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacksky007/kong-gateway-admin-form-generator.git"
+  },
+  "author": "Xiaojie Liu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jacksky007/kong-gateway-admin-form-generator/issues"
+  },
+  "homepage": "https://github.com/jacksky007/kong-gateway-admin-form-generator#readme",
+  "devDependencies": {
+    "@parcel/transformer-pug": "^2.6.2",
+    "@parcel/transformer-stylus": "^2.6.2",
+    "@prettier/plugin-pug": "^2.1.1",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
+    "antd": "^4.21.4",
+    "parcel": "^2.6.2",
+    "prettier": "^2.7.1",
+    "process": "^0.11.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

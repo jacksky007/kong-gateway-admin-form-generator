@@ -102,3 +102,13 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Additional ignored paths and files
+## parcel cache dir
+.parcel-cache/
+
+## built files by running `npm run dev`
+dev/
+
+## built files by running `npm run build`
+build/
