@@ -23,6 +23,9 @@ export const SideMenu: FC<SideMenuProps> = ({ defaultActiveIndex = 0, entities, 
             key={entities[index]}
             className={classnames({ [styles['active']]: activeIndex === index })}
             onClick={() => {
+              if (activeIndex === index) {
+                return
+              }
               setActiveIndex(index)
               onChange(entities[index])
             }}

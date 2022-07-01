@@ -3,28 +3,14 @@ import { Form, Input } from 'antd'
 
 import { StringType } from '../interface'
 import { getValidatorsFromSchema } from '../validator.ts'
+import { FormFieldProps } from './interface'
 
-interface FormFieldStringProps {
-  name: string
-  schema: StringType
-}
+interface FormFieldStringProps extends FormFieldProps<StringType> {}
 
 export const FormFieldString: FC<FormFieldStringProps> = ({ name, schema }) => {
   return (
-    <Form.Item
-      label={name}
-      name={name}
-      rules={[
-        {
-          validator: async (rule, value) => {
-            console.log('validator:', ' rule', rule, 'value', value)
-            return
-          },
-        },
-        ...getValidatorsFromSchema(schema),
-      ]}
-    >
-      <Input type="text"></Input>
+    <Form.Item label={name} name={name} rules={[...getValidatorsFromSchema(schema)]}>
+      <Input type="text" />
     </Form.Item>
   )
 }

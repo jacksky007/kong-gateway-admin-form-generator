@@ -1,74 +1,43 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
+import { Button, Form, FormInstance } from 'antd'
 
 import 'antd/dist/antd.css'
 import './index.styl'
 
 import { EntityTypes, SideMenu } from '../components/side-menu'
 import { FormGenerator, FormGeneratorProps } from '../components/form-generator'
-import { Button, Form } from 'antd'
+import { logger } from '../utils/logger'
+import { FieldSchema } from '../components/form-generator/interface'
 
-// only these entities are fully supported in this lite version form generator
+// only these entities are supported in this version
 const entities = ['Services', 'Routes', 'Consumers', 'Plugins'] as EntityTypes[]
 
-const exampleFields1: FormGeneratorProps['schema']['fields'] = [
-  {
-    id: {
-      type: 'number',
-      required: true,
-      default: 1,
-      gt: 1,
-      between: [0, 1],
-    },
-  },
-  {
-    name: {
-      type: 'string',
-      required: true,
-      default: 'default name',
-      len_min: 1,
-      len_max: 10,
-    },
-  },
-  {
-    protocol: {
-      default: 'http',
-      // indexed: true,
-      len_min: 1,
-      one_of: ['grpc', 'grpcs', 'http', 'https', 'tcp', 'tls', 'tls_passthrough', 'udp'],
-      required: true,
-      type: 'string',
-    },
-  },
-]
-
-const exampleFields2: FormGeneratorProps['schema']['fields'] = [
-  {
-    id: {
-      type: 'number',
-      required: true,
-      default: 10,
-      gt: 1,
-      between: [0, 10],
-    },
-  },
-]
+async function getSchema(entityType): Promise<{ fields: FieldSchema[] }> {
+  const response = await fetch(`/schemas/${entityType.toLocaleLowerCase()}`)
+  const data = await response.json()
+  return data
+}
 
 const Index = () => {
-  const [fields, setFields] = useState<FormGeneratorProps['schema']['fields']>(exampleFields1)
+  const [activeEntityType, setActiveEntityType] = useState(entities[0])
+  const [schema, setSchema] = useState<FormGeneratorProps['schema']>({ fields: [] })
 
-  const onChangEntityType = (entityType: EntityTypes) => {
-    console.log(`choose entity type: ${entityType}`)
-    if (entityType === entities[0]) {
-      setFields(exampleFields1)
-      return
-    }
-    setFields(exampleFields2)
+  const onChangEntityType = async (entityType: EntityTypes) => {
+    logger.log(`choose entity type: ${entityType}`)
+    setActiveEntityType(entityType)
+    const data = await getSchema(entityType)
+    setSchema(data)
   }
 
-  const [form] = Form.useForm()
+  // get first entity on initialization
+  useEffect(() => {
+    getSchema(activeEntityType).then(setSchema)
+  }, [])
+
+  const formRef = useRef<FormInstance>(null)
   const submitForm = () => {
-    console.log('submit form', 'values:', form.getFieldsValue())
+    logger.log('submit form', 'values:', formRef.current?.getFieldsValue())
   }
 
   return (
@@ -81,12 +50,13 @@ const Index = () => {
         <SideMenu entities={entities} onChange={onChangEntityType} />
       </aside>
       <main>
-        <FormGenerator form={form} schema={{ fields }}>
-          <Button onClick={(event) => submitForm()}>Submit</Button>
+        <FormGenerator key={activeEntityType} ref={formRef} schema={schema}>
+          <Button onClick={(event) => submitForm()} type="primary">
+            Submit
+          </Button>
         </FormGenerator>
       </main>
     </>
   )
 }
-
 ReactDOM.render(<Index />, document.querySelector('#app'))

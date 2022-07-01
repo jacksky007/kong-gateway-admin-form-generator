@@ -2,28 +2,19 @@ import { FC } from 'react'
 import { Form, Input } from 'antd'
 import { NumberType } from '../interface'
 import { getValidatorsFromSchema } from '../validator.ts'
+import { FormFieldProps } from './interface'
 
-interface FormFieldNumberProps {
-  name: string
-  schema: NumberType
-}
+interface FormFieldNumberProps extends FormFieldProps<NumberType> {}
 
 export const FormFieldNumber: FC<FormFieldNumberProps> = ({ name, schema }) => {
   return (
     <Form.Item
+      initialValue={schema.default as number}
       label={name}
       name={name}
-      rules={[
-        {
-          validator: async (rule, value) => {
-            console.log('validator:', ' rule', rule, 'value', value)
-            return
-          },
-        },
-        ...getValidatorsFromSchema(schema),
-      ]}
+      rules={[...getValidatorsFromSchema(schema)]}
     >
-      <Input type="number" defaultValue={schema.default as number}></Input>
+      <Input placeholder="input a number" type="number" />
     </Form.Item>
   )
 }
