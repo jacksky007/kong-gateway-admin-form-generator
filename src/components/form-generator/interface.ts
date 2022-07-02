@@ -31,17 +31,17 @@ interface StringValidators {
 
 // field validator properties
 interface GenericValidators {
-  eq?: unknown
-  ne?: unknown
-  match?: unknown
-  not_match?: unknown
-  match_all?: unknown
-  match_any?: unknown
-  starts_with?: unknown
-  one_of?: unknown
-  contains?: unknown
-  is_regex?: unknown
-  custom_validator?: unknown
+  eq?: any
+  ne?: any
+  match?: any
+  not_match?: any
+  match_all?: any[]
+  match_any?: any[]
+  starts_with?: string
+  one_of?: string[]
+  contains?: string
+  is_regex?: string
+  custom_validator?: any
 }
 
 export interface BooleanType extends GenericProperties<'boolean'> {}
@@ -57,20 +57,21 @@ export interface ArrayType extends GenericProperties<'array'> {
   contains?: string[]
 }
 
-interface MapType extends GenericProperties<'map'> {
+export interface MapType extends GenericProperties<'map'> {
   keys: unknown[]
   values: unknown[]
 }
 
-interface RecordType extends GenericProperties<'record'> {
+export interface RecordType extends GenericProperties<'record'> {
   fields: FieldType[]
 }
 
-interface SetType extends GenericProperties<'set'> {
-  elements: unknown[]
+export interface SetType extends GenericProperties<'set'> {
+  // now we support string element in set field only
+  elements: StringType
 }
 
-interface ForeignType extends GenericProperties<'foreign'> {
+export interface ForeignType extends GenericProperties<'foreign'> {
   // eq can only be null when type is 'foreign'
   eq: null
   // type of the entity referenced by this entity

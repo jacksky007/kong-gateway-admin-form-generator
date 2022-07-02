@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Form, Input } from 'antd'
+import { Form, InputNumber } from 'antd'
 import { NumberType } from '../interface'
 import { getValidatorsFromSchema } from '../validator.ts'
 import { FormFieldProps } from './interface'
@@ -14,7 +14,7 @@ export const FormFieldNumber: FC<FormFieldNumberProps> = ({ name, schema }) => {
       name={name}
       rules={[...getValidatorsFromSchema(schema)]}
     >
-      <Input placeholder="input a number" type="number" />
+      <InputNumber placeholder="input a number" />
     </Form.Item>
   )
 }

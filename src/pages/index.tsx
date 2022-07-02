@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Form, FormInstance } from 'antd'
+import { Button, Form, FormInstance, Modal } from 'antd'
 
 import 'antd/dist/antd.css'
 import './index.styl'
@@ -36,9 +36,36 @@ const Index = () => {
   }, [])
 
   const formRef = useRef<FormInstance>(null)
-  const submitForm = () => {
-    logger.log('submit form', 'values:', formRef.current?.getFieldsValue())
+  const submitForm = async () => {
+    const form = formRef.current
+
+    if (!form) {
+      return
+    }
+
+    logger.log(`submit form to create ${activeEntityType.toLocaleLowerCase()}`)
+
+    const values = formRef.current?.getFieldsValue()
+
+    const response = await fetch(`/${activeEntityType.toLocaleLowerCase()}`, {
+      method: 'POST',
+      body: JSON.stringify(values),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const data = await response.json()
+    if (!data.code) return
+
+    const modal = Modal.info({
+      title: `Post form to create ${activeEntityType}`,
+      width: '50vw',
+      content: <div style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(data, null, 2)}</div>,
+    })
   }
+
+  const [refreshKey, setRefreshKey] = useState(Date.now())
+  useEffect(() => {
+    formRef.current?.validateFields()
+  }, [formRef.current])
 
   return (
     <>
@@ -50,10 +77,22 @@ const Index = () => {
         <SideMenu entities={entities} onChange={onChangEntityType} />
       </aside>
       <main>
-        <FormGenerator key={activeEntityType} ref={formRef} schema={schema}>
-          <Button onClick={(event) => submitForm()} type="primary">
-            Submit
-          </Button>
+        <FormGenerator key={`${activeEntityType}-${refreshKey}`} ref={formRef} schema={schema}>
+          <Form.Item shouldUpdate>
+            {() => {
+              const result = formRef.current?.getFieldsError()
+
+              return (
+                <Button
+                  disabled={!!result?.find(({ errors }) => errors.length > 0)}
+                  onClick={(event) => submitForm()}
+                  type="primary"
+                >
+                  Submit
+                </Button>
+              )
+            }}
+          </Form.Item>
         </FormGenerator>
       </main>
     </>

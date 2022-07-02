@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Form, Input } from 'antd'
+import { Form, InputNumber } from 'antd'
 import { IntegerType } from '../interface'
 import { getValidatorsFromSchema } from '../validator.ts'
 import { FormFieldProps } from './interface'
@@ -7,6 +7,7 @@ import { FormFieldProps } from './interface'
 interface FormFieldIntegerProps extends FormFieldProps<IntegerType> {}
 
 export const FormFieldInter: FC<FormFieldIntegerProps> = ({ name, schema }) => {
+  const [min, max] = schema.between || []
   return (
     <Form.Item
       initialValue={schema.default as number}
@@ -14,6 +15,7 @@ export const FormFieldInter: FC<FormFieldIntegerProps> = ({ name, schema }) => {
       name={name}
       rules={[
         {
+          // check whether input value is en integer
           validator: async (rule, value) => {
             if (Math.round(value) !== value) {
               throw new Error('This field should be an integer')
@@ -23,7 +25,7 @@ export const FormFieldInter: FC<FormFieldIntegerProps> = ({ name, schema }) => {
         ...getValidatorsFromSchema(schema),
       ]}
     >
-      <Input type="number" />
+      <InputNumber {...{ max, min }} style={{ width: '100%' }} />
     </Form.Item>
   )
 }
